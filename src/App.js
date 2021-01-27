@@ -19,7 +19,8 @@ const App = () => {
   const account = {
     type: "Checking",
     balance: 500,
-    owner: customer.id
+    owner: customer.id,
+    tlog: []
   }
 
   const [accounts, setAccounts] = useState([account]);
@@ -62,6 +63,7 @@ const addNewCustomer = event => {
     name: event.target.name.value,
     password: event.target.password.value,
     id: id
+    
   }
   customers.push(customer)
   addNewAccount(event, customer)
@@ -76,7 +78,8 @@ const addNewAccount = (event, customer) => {
   let account = {
     name: event.target.accountType.value,
     balance: parseInt(event.target.deposit.value),
-    id: customer.id
+    owner: customer.id,
+    tlog: []
   }
   accounts.push(account);
   console.log(accounts);
@@ -98,7 +101,30 @@ const logout = () => {
   setLoggedInCustomer();
 }
 
+const withdraw = (amount, account) => {
+  if(amount > account.balance) {
+    console.log("You can't withdraw more than the balance")
+  } else {
+    account.balance = account.balance - amount;
+    console.log("Account balance is now " + account.balance)
+    account.tlog.push("withdrew $" + amount);
+  }
+ 
+}
 
+const deposit = (amount, account) => {
+  if(amount < 1) {
+    console.log("You can't deposit that amount")
+  } else {
+    account.balance = account.balance + Number(amount);
+    console.log("Account balance is now " + account.balance)
+    account.tlog.push("Deposited $" + amount);
+  }
+}
+
+const logAccounts = () => {
+  console.log(accounts);
+}
 
 
   return (
@@ -114,6 +140,7 @@ const logout = () => {
       </form> */}
    <button onClick = {logCustomer} > Log customer </button>
    <button onClick = {logList} > Log customerList </button>
+   <button onClick = {logAccounts}> Log Account List</button>
    <button onClick = {logLoggedIn}>Who is logged in?</button>
    <button onClick = {logout}> Logout</button>
    <br></br>
@@ -140,7 +167,8 @@ const logout = () => {
             <NewCustomer addCustomer = {addNewCustomer} login = {login}/>
            
              :
-             <MainMenu customer = {loggedInCustomer} accounts = {accounts} logout = {logout} />
+             <MainMenu customer = {loggedInCustomer} accounts = {accounts} logout = {logout} withdraw = {withdraw}
+                        deposit = {deposit} />
    }
     
     </div>
